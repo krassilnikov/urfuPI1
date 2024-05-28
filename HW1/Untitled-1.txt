@@ -1,0 +1,45 @@
+# %%
+import pandas as pd
+#загружаем данные
+df = pd.read_csv('C:\\Users\\ultra\\Downloads\\data__1_.csv', sep=';', encoding = 'windows-1251' )
+df.head(10)
+
+# %%
+#Преобразовываем тип данных в столбце ‘Дата создания’ при помощи метода pd.to_datetime
+df['Дата создания'] = pd.to_datetime(df['Дата создания'], format='%d.%m.%Y %H:%M')
+df.head(10)
+
+# %%
+#Добавляем столбец Date
+df["Date"] = df['Дата создания'].dt.date
+df.info()
+
+# %%
+#Добавляем столбец Hour
+df["Hour"] = df['Дата создания'].dt.hour
+df.head()
+
+# %%
+#Строим сводную таблицу содержащую количество личных дел, 
+#принятых приёмной комиссией в течение каждого рабочего часа (index = 'Hour', columns = 'Date')
+dff = df.pivot_table(
+    values='ЛД',
+    index='Hour',
+    columns='Date',
+    aggfunc='count',
+    fill_value=0
+)
+
+# %%
+import matplotlib.pyplot as plt
+import seaborn as sns
+#Строим графическое представление данных в виде heatmap из библиотеки SeaBorn
+fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(40, 10))
+heatmap = sns.heatmap(
+    data=dff, 
+    linewidths=1,
+    linecolor='w',
+    cmap='viridis',
+    ax=axes)
+
+
